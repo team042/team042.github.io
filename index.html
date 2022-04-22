@@ -41,7 +41,19 @@
             var out = [];
             if (f.properties) {
                 for (key in f.properties) {
-                    out.push(key + ": " + f.properties[key]);
+					if (key == "dyad_name"){
+						out.push("Event Name: " + f.properties[key]);
+					}
+					if (key == "scale"){
+						out.push("Scale: "+f.properties[key])
+					}
+					if (key == "date_start"){
+						out.push("Event Start Date: "+f.properties[key])
+					}
+					if (key == "date_end"){
+						out.push("Event End Date: "+f.properties[key])
+					}
+                    // out.push(key + ": " + f.properties[key]);
                 }
                 l.bindPopup(out.join("<br />"));
             }
