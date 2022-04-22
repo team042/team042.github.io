@@ -37,6 +37,14 @@
 		
         // map.addLayer(markers)
         // pop-up function
+		function antPath(f, l){
+			if (f.properties){
+				for (key in f.properties){
+					console.log(key)
+				}
+			}
+		}
+
         function popUp(f, l) {
             var out = [];
             if (f.properties) {
@@ -76,6 +84,9 @@
             markers.addLayer(points);
             add_layer(markers, "Point Markers")
         });
+
+		var paths = new L.GeoJSON.AJAX("sc_routes_json.json", { onEachFeature: antPath});
+
     </script>
 </body>
 </html>
