@@ -80,8 +80,7 @@
 
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
         paths.on('data:loaded', function () {
-            markers.addLayer(paths);
-            add_layer(markers, "Point Markers")
+			
         });
 		L.control.layers(overlays).addTo(map);
     </script>
