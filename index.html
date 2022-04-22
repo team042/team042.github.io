@@ -1,29 +1,85 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<!--     <link rel="stylesheet" href="static/style.css"> -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <!-- sourcing add-ons for jquery-->
-    <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
-<!--     <script src="../static/leaflet-ant-path.js"></script> -->
+	
+	<title>Quick Start</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+
+	
 </head>
-    <body>
-      <div id="map"></div>
-      <script>
-            var map = L.map('map').setView([19.451054, -26.846527], 4);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'}).addTo(map);
-            map.options.minZoom = 3;
-            var southWest = L.latLng(-89.98155760646617, -220),
-            northEast = L.latLng(89.99346179538875, 220);
-            var bounds = L.latLngBounds(southWest, northEast);
-            map.setMaxBounds(bounds);
-            map.on('drag', function() {
-                map.panInsideBounds(bounds, { animate: false });
-            })
-        </script>
-    </body>
+<body>
+
+
+
+<div id="map" style="width: 80vw; height: 80vh;"></div>
+<script>
+
+	var map = L.map('map')
+    .setView([35.05698043137265, -85.3143310546875], 9);
+
+	var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(map);
+
+	var marker = L.marker([35.05698043137265, -85.3143310546875]).addTo(map)
+		.bindPopup('<b>Hello world!</b><br />I am a popup.');//.openPopup();
+    // var shapeStyle = {
+	// 	color: '#FFF',
+	// 	fillColor: '#000',
+	// 	weight: 0.5,
+    //     fillOpacity: 0.5
+    // }
+	// var circle = L.circle([35.05698043137265, -85.3143310546875], 1000, shapeStyle).addTo(map).bindPopup('I am a circle.');
+
+	// var polygon = L.polygon([
+	// 	[51.509, -0.08],
+	// 	[51.503, -0.06],
+	// 	[51.51, -0.047]
+	// ]. shapeStyle).addTo(map).bindPopup('I am a polygon.');
+
+
+	// var popup = L.popup()
+	// 	.setLatLng([51.513, -0.09])
+	// 	.setContent('I am a standalone popup.');
+	// 	//.openOn(map);
+
+	// function onMapClick(e) {
+	// 	popup
+	// 		.setLatLng(e.latlng)
+	// 		.setContent('You clicked the map at ' + e.latlng.toString())
+	// 		.openOn(map);
+	// }
+
+	// map.on('click', onMapClick);
+
+</script>
+
+
+
+</body>
 </html>
