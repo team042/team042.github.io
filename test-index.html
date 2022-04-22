@@ -1,0 +1,69 @@
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <!-- sourcing add-ons for jquery-->
+    <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
+    <script src="leaflet-ant-path.js"></script>
+    <script src="leaflet.ajax.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'}).addTo(map);
+        map.options.minZoom = 3;
+        var southWest = L.latLng(-89.98155760646617, -220),
+        northEast = L.latLng(89.99346179538875, 220);
+        var bounds = L.latLngBounds(southWest, northEast);
+        map.setMaxBounds(bounds);
+
+        // function forEachFeature(feature, layer) {
+        //     var popupContent = "Event name: " + feature.properties.dyad_name + "</br> Event Scale: " + feature.properties.scale + "</br> Start Date: " + feature.properties.date_start + "</br> End Date: " + feature.properties.date_end ;
+        //     if (feature.properties && feature.properties.popupContent) {
+		// 		popupContent += feature.properties.popupContent;
+		// 	}
+		// 		layer.bindPopup(popupContent);
+        // }
+		// var markers = L.markerClusterGroup();
+		
+        // map.addLayer(markers)
+        // pop-up function
+        function popUp(f, l) {
+            var out = [];
+            if (f.properties) {
+                for (key in f.properties) {
+                    out.push(key + ": " + f.properties[key]);
+                }
+                l.bindPopup(out.join("<br />"));
+            }
+        }
+
+        // add layer to map and layer control
+        function add_layer(layr, layr_name) {
+            map.addLayer(layr);
+            layerControl.addOverlay(layr, layr_name);
+        }
+
+        // fire ajax request
+        var points = new L.GeoJSON.AJAX("events.geojson", { onEachFeature: popUp });
+
+        // create empty marker cluster group
+        var markers = L.markerClusterGroup()
+
+        // when geojson is loaded, add points to marker cluster group and add to map & layer control
+        points.on('data:loaded', function () {
+            markers.addLayer(points);
+            add_layer(markers, "Point Markers")
+        });
+    </script>
+</body>
+</html>
