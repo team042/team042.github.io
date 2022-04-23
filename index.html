@@ -31,7 +31,6 @@
 			out = []
 			if (f.geometry){
 				for (key in f.properties) {
-					console.log("hi")
 					if (f.properties["weight"]>=0.25) {
 						if (key == "route_ID"){
 							out.push("Route ID: " + f.properties[key]);
@@ -81,6 +80,7 @@
         function add_layer(layr, layr_name) {
             map.addLayer(layr);
             layerControl.addOverlay(layr, layr_name);
+			layercontrol.addTo(map)
         }
 
         // fire ajax request
