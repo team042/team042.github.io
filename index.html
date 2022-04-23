@@ -46,10 +46,11 @@
 							out.push("Route Type: " + f.properties[key]);
 						}
 						latlngs = f.geometry["coordinates"]
+						l.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
 						// l.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
 					}				
 				}
-				l.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
+				
 			}
 		}
 
@@ -70,9 +71,8 @@
 					if (key == "date_end"){
 						out.push("Event End Date: "+f.properties[key])
 					}
-                    // out.push(key + ": " + f.properties[key]);
-                }
-                l.bindPopup(out.join("<br />"));
+					l.bindPopup(out.join("<br />"));
+				}
             }
         }
 
