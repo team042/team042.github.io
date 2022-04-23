@@ -24,3 +24,13 @@
   p{
     font-size:20px;
   }
+
+  select {
+    font-size:20px;
+    width: 180px;
+  }
+  
+  input {
+    font-size:20px;
+    width: 180px;
+  }

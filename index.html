@@ -44,13 +44,20 @@
 		<p><u>Event Search</u></p>
 		<input id="event-search" type="text" />
 		<p><u>Route Type</u></p>
-		<input id="commodity-search" type="text" />
+		<select id="route-type-select">
+			<option value="">(Select Type)</option>
+			<option value="Air">Air</option>
+			<option value="Road">Road</option>
+			<option value="Sea">Sea</option>
+		</select>
 		<p><u>Route Spend</u></p>
 		<div id="commodity-slider" class="slider"></div>
 		<p><u>Route Year</u></p>
-		<div id="year-slider" class="slider"></div>
+		<div id="route-year-slider" class="slider"></div>
 		<p><u>Minimum Event Scale</u></p>
 		<div id="event-slider" class="slider"></div>
+		<p><u>Earliest Event Date</u></p>
+		<div id="event-date-slider" class="slider"></div>
 	</div>
     <div id="map" style="width:100%;"></div>
 
@@ -65,8 +72,16 @@
         map.setMaxBounds(bounds);
         
 		
-		eventsGeoJSON = false
-
+		var eventsGeoJSON = false
+		var routesGeoJSON = false
+		var eventFilters ={
+			text: '',
+			range: []
+		}
+		var routeFilters = {
+			text: '',
+			range: []
+		}
         // create empty marker cluster group
 		var markers = L.markerClusterGroup()
 
@@ -75,18 +90,8 @@
 		})
 		.then(response => response.json())
 		.then(json => {
-			// var eventScaleMin = 0
-			// var eventScaleMax = 0
 			eventsGeoJSON = L.geoJSON(json, {
 				pointToLayer: function(geoJsonPoint, latlng){
-					// Get min/max
-					// if(geoJsonPoint.properties['scale']<eventScaleMin || eventScaleMin === 0){
-					// 	eventScaleMin = geoJsonPoint.properties['scale']
-					// 	console.log(eventScaleMin)
-					// }
-					// if(geoJsonPoint.properties['scale']>eventScaleMax){
-					// 	eventScaleMax = geoJsonPoint.properties['scale']
-					// }
 					var html='';
 					var arrayOfProps=['dyad_name','Total_deaths','date_start','date_end','scale'];
 					arrayOfProps.forEach(function(prop){
@@ -114,7 +119,7 @@
 		.catch(error => console.log(error.message))
 		markers.addTo(map)
         
-		routesGeoJSON = false
+		
 		// Create layer group for routes
 		var allRoutes = L.layerGroup()
 
@@ -123,6 +128,7 @@
 		})
 		.then(response => response.json())
 		.then(json => {
+			var htmlToAdd = [];
 			console.log(json)
 			routesGeoJSON = L.geoJSON(json, {
 				style: function (feature) {
@@ -192,10 +198,10 @@
 			})
 		})
 
-		$(document).on('keyup', '#commodity-search', function(e) {
-			var userInput = e.target.value;
+		$(document).on('change', '#route-type-select', function(e) {
+			var routeType = e.target.value;
 			routesGeoJSON.eachLayer(function(layer){
-				if(layer.feature.properties.route_type.toLowerCase().indexOf(userInput.toLowerCase())>-1){
+				if(layer.feature.properties.route_type==routeType){
 					allRoutes.addLayer(layer);
 				} else {
 					allRoutes.removeLayer(layer);
@@ -236,10 +242,23 @@
 
 		});
 
-		var yearSlider = document.getElementById('year-slider');
+		var yearSlider = document.getElementById('route-year-slider');
 		noUiSlider.create(yearSlider, {
 			tooltips: true,
 			start: [20, 20000000],
+			connect: true,
+			range: {
+				'min': 0,
+				'max': 100
+			}
+		}).on('slide', function(e) {
+
+		});
+
+		var dateSlider = document.getElementById('event-date-slider');
+		noUiSlider.create(dateSlider, {
+			tooltips: true,
+			start: [20],
 			connect: true,
 			range: {
 				'min': 0,
