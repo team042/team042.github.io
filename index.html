@@ -26,33 +26,28 @@
         var bounds = L.latLngBounds(southWest, northEast);
         map.setMaxBounds(bounds);
         
-		// function antPath(f, l){
-		// 	// console.log("hi")
-		// 	out = []
-		// 	if (f.geometry){
-		// 		for (key in f.properties) {
-		// 			if (f.properties["weight"]>=0.25) {
-		// 				if (key == "route_ID"){
-		// 					out.push("Route ID: " + f.properties[key]);
-		// 				}
-		// 				if (key == "orig_ISO"){
-		// 					out.push("Origin: " + f.properties[key]);
-		// 				}
-		// 				if (key == "dest_ISO"){
-		// 					out.push("Destination: " + f.properties[key]);
-		// 				}
-		// 				if (key == "route_type"){
-		// 					out.push("Route Type: " + f.properties[key]);
-		// 				}
-		// 				// latlngs = f.geometry["coordinates"]
-		// 				// L.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
-		// 				l.bindPopup(out.join("<br />"));
-		// 				// l.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
-		// 			}				
-		// 		}
-				
-		// 	}
-		// }
+		function antPath(f, l){
+			out = []
+			if (f.geometry){
+				for (key in f.properties) {
+					if (f.properties["weight"]>=0.25) {
+						if (key == "route_ID"){
+							out.push("Route ID: " + f.properties[key]);
+						}
+						if (key == "orig_ISO"){
+							out.push("Origin: " + f.properties[key]);
+						}
+						if (key == "dest_ISO"){
+							out.push("Destination: " + f.properties[key]);
+						}
+						if (key == "route_type"){
+							out.push("Route Type: " + f.properties[key]);
+						}
+						l.bindPopup(out.join("<br />"));
+					}				
+				}
+			}
+		}
 
 		// pop-up function
         function popUp(f, l) {
@@ -71,19 +66,6 @@
 					if (key == "date_end"){
 						out.push("Event End Date: "+f.properties[key])
 					}
-					if (f.properties["weight"]>=0.25) {
-						if (key == "route_ID"){
-							out.push("Route ID: " + f.properties[key]);
-						}
-						if (key == "orig_ISO"){
-							out.push("Origin: " + f.properties[key]);
-						}
-						if (key == "dest_ISO"){
-							out.push("Destination: " + f.properties[key]);
-						}
-						if (key == "route_type"){
-							out.push("Route Type: " + f.properties[key]);
-						}
 					l.bindPopup(out.join("<br />"));
 				}
             }
