@@ -27,13 +27,11 @@
         map.setMaxBounds(bounds);
         
 		function antPath(f, l){
-			console.log("hi")
 			if (f.properties){
 				for (key in f.properties){
-					console.log(key)
+					console.log(f.properties[key])
 				}
 			} else {
-				console.log("hi")
 			}
 		}
 
@@ -81,7 +79,7 @@
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
         paths.on('data:loaded', function () {
-			
+
         });
 
 		L.control.layers(overlays).addTo(map);
