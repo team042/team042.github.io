@@ -29,7 +29,9 @@
 		function antPath(f, l){
 			console.log("hi")
 			if (f.geometry){
-				console.log(f.geometry.coordinates[0])
+				for (key in f.properties) {
+					console.log(key)
+				}
 			}
 		}
 
