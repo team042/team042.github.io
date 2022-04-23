@@ -21,21 +21,35 @@
         var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'}).addTo(map);
         map.options.minZoom = 3;
-        var southWest = L.latLng(-89.98155760646617, -220),
-        northEast = L.latLng(89.99346179538875, 330);
+        var southWest = L.latLng(-89.98155760646617, -400),
+        northEast = L.latLng(89.99346179538875, 400);
         var bounds = L.latLngBounds(southWest, northEast);
         map.setMaxBounds(bounds);
         
 		function antPath(f, l){
 			// console.log("hi")
+			out = []
 			if (f.geometry){
 				for (key in f.properties) {
 					console.log("hi")
 					if (f.properties["weight"]>=0.25) {
+						if (key == "route_ID"){
+							out.push("Route ID: " + f.properties[key]);
+						}
+						if (key == "orig_ISO"){
+							out.push("Origin: " + f.properties[key]);
+						}
+						if (key == "dest_ISO"){
+							out.push("Destination: " + f.properties[key]);
+						}
+						if (key == "route_type"){
+							out.push("Route Type: " + f.properties[key]);
+						}
 						latlngs = f.geometry["coordinates"]
-						L.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
+						// l.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
 					}				
 				}
+				l.polyline(latlngs).bindPopup(out.join("<br />"));
 			}
 		}
 
