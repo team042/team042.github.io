@@ -50,14 +50,14 @@
 			<option value="Road">Road</option>
 			<option value="Sea">Sea</option>
 		</select>
-		<p><u>Route Spend</u></p>
+		<!-- <p><u>Route Spend</u></p>
 		<div id="commodity-slider" class="slider"></div>
 		<p><u>Route Year</u></p>
-		<div id="route-year-slider" class="slider"></div>
+		<div id="route-year-slider" class="slider"></div> -->
 		<p><u>Minimum Event Scale</u></p>
 		<div id="event-slider" class="slider"></div>
-		<p><u>Earliest Event Date</u></p>
-		<div id="event-date-slider" class="slider"></div>
+		<!-- <p><u>Earliest Event Date</u></p>
+		<div id="event-date-slider" class="slider"></div> -->
 	</div>
     <div id="map" style="width:100%;"></div>
 
@@ -202,6 +202,8 @@
 			var routeType = e.target.value;
 			routesGeoJSON.eachLayer(function(layer){
 				if(layer.feature.properties.route_type==routeType){
+					allRoutes.addLayer(layer);
+				} else if (routeType == ""){
 					allRoutes.addLayer(layer);
 				} else {
 					allRoutes.removeLayer(layer);
