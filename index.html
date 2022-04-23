@@ -76,6 +76,12 @@
 					if (key == "route_type"){
 						out.push("Route Type: " + f.properties[key]);
 					}
+					if (key == "max_good"){
+						out.push("Highest Spend Commodity: " + f.properties[key]["HS"])
+					}
+					if (key == "qty"){
+						out.push("Commodity Spend: " + f.properties[key]["qty"])
+					}
 					l.bindPopup(out.join("<br />"));
 				}
             }
