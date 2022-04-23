@@ -45,8 +45,9 @@
 						if (key == "route_type"){
 							out.push("Route Type: " + f.properties[key]);
 						}
-						latlngs = f.geometry["coordinates"]
-						L.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
+						// latlngs = f.geometry["coordinates"]
+						// L.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
+						l.bindPopup(out.join("<br />"));
 						// l.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
 					}				
 				}
@@ -99,8 +100,8 @@
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
         paths.on('data:loaded', function () {
-			// antPaths.addLayer(paths);
-			// add_layer(antPaths, "Routes")
+			antPaths.addLayer(paths);
+			add_layer(antPaths, "Routes")
         });
 		// antPaths.addTo(map)
 		// layerControl.addTo(map);
