@@ -130,7 +130,23 @@
 		// Create layer group for ant paths
 		var allRoutes = L.layerGroup()
 		// when geojson is loaded, add paths to group and add to map & layer control
-		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: popUp});
+		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", {style: function(feature) {
+			if (feature.properties["route_type"] == "sea") {
+				return {
+					color: 'blue'
+				}
+			}
+			if (feature.properties["route_type"] == "Road") {
+				return {
+					color: 'green'
+				}
+			}
+			if (feature.properties["route_type"] == "Air") {
+				return {
+					color: 'grey'
+				}
+			}
+		}, onEachFeature: popUp});
         paths.on('data:loaded', function () {
 			allRoutes.addLayer(paths);
 			add_layer(allRoutes, "Routes")
