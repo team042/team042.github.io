@@ -27,12 +27,12 @@
         map.setMaxBounds(bounds);
         
 		function antPath(f, l){
-			console.log("hi")
+			// console.log("hi")
 			if (f.geometry){
 				for (key in f.geometry) {
 					latlngs = f.geometry["coordinates"]
-					console.log(latlngs)
-					L.polyline.antPath(latlngs).addTo(map)
+					// console.log(latlngs)
+					L.polyline(latlngs).addTo(map)
 				}
 			}
 		}
