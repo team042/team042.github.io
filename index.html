@@ -63,8 +63,8 @@
 			<div class='legend-scale'>
 			  <ul class='legend-labels'>
 				<li><span style='background:rgba(200,200,200,1)'></span>Air</li>
-				<li><span style='background:rgba(0,90,171,1);'></span>Sea</li>
 				<li><span style='background:rgba(42,166,115,1);'></span>Road</li>
+				<li><span style='background:rgba(0,90,171,1);'></span>Sea</li>
 			  </ul>
 			</div>
 		</div>
@@ -218,9 +218,9 @@
 		$(document).on('change', '#route-type-select', function(e) {
 			var routeType = e.target.value;
 			routesGeoJSON.eachLayer(function(layer){
-				if(layer.feature.properties.route_type==routeType){
+				if(routeType == ""){
 					allRoutes.addLayer(layer);
-				} else if (routeType == ""){
+				} else if (layer.feature.properties.route_type==routeType){
 					allRoutes.addLayer(layer);
 				} else {
 					allRoutes.removeLayer(layer);
