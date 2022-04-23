@@ -29,10 +29,14 @@
 		function antPath(f, l){
 			// console.log("hi")
 			if (f.geometry){
-				for (key in f.geometry) {
-					latlngs = f.geometry["coordinates"]
+				for (key in f.properties) {
+					console.log(key)
+					if (f.properties["scale"]>1.0) {
+						latlngs = f.geometry["coordinates"]
+						L.polyline(latlngs).addTo(map)
+					}
 					// console.log(latlngs)
-					L.polyline(latlngs).addTo(map)
+					
 				}
 			}
 		}
