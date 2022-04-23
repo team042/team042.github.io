@@ -30,8 +30,7 @@
 			console.log("hi")
 			if (f.geometry){
 				for (key in f.geometry) {
-					
-					latlngs = f.geometry[coordinates]
+					latlngs = f.geometry["coordinates"]
 					console.log(latlngs)
 					L.polyline.antPath(latlngs).addTo(map)
 				}
