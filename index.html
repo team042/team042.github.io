@@ -33,6 +33,7 @@
 		.slider {
 			width: 200px;
 			margin-top: 50px;
+			margin-bottom: 50px;
 		}
 	</style>
 </head>
@@ -42,10 +43,12 @@
 		<h2>Map Options</h2>
 		<p><u>Event Search</u></p>
 		<input id="event-search" type="text" />
-		<p><u>Commodity Search</u></p>
+		<p><u>Route Type</u></p>
 		<input id="commodity-search" type="text" />
-		<p><u>Commodity Value</u></p>
+		<p><u>Route Spend</u></p>
 		<div id="commodity-slider" class="slider"></div>
+		<p><u>Route Year</u></p>
+		<div id="year-slider" class="slider"></div>
 		<p><u>Minimum Event Scale</u></p>
 		<div id="event-slider" class="slider"></div>
 	</div>
@@ -61,99 +64,57 @@
         var bounds = L.latLngBounds(southWest, northEast);
         map.setMaxBounds(bounds);
         
-		// function antPath(f, l){
-		// 	out = []
-		// 	if (f.geometry){
-		// 		for (key in f.properties) {
-		// 			if (key == "route_ID"){
-		// 				out.push("Route ID: " + f.properties[key]);
-		// 			}
-		// 			if (key == "orig_ISO"){
-		// 				out.push("Origin: " + f.properties[key]);
-		// 			}
-		// 			if (key == "dest_ISO"){
-		// 				out.push("Destination: " + f.properties[key]);
-		// 			}
-		// 			if (key == "route_type"){
-		// 				out.push("Route Type: " + f.properties[key]);
-		// 			}
-		// 			l.bindPopup(out.join("<br />"));
-		// 		}
-		// 	}
-		// }
-
-		// pop-up function
-        // function popUp(f, l) {
-        //     var out = [];
-        //     if (f.properties) {
-        //         for (key in f.properties) {
-		// 			if (key == "dyad_name"){
-		// 				out.push("Event Name: " + f.properties[key]);
-		// 			}
-		// 			if (key == "scale"){
-		// 				out.push("Scale: "+f.properties[key])
-		// 			}
-		// 			if (key == "date_start"){
-		// 				out.push("Event Start Date: "+f.properties[key])
-		// 			}
-		// 			if (key == "date_end"){
-		// 				out.push("Event End Date: "+f.properties[key])
-		// 			}
-		// 			if (key == "route_ID"){
-		// 				out.push("Route ID: " + f.properties[key]);
-		// 			}
-		// 			if (key == "orig_ISO"){
-		// 				out.push("Origin: " + f.properties[key]);
-		// 			}
-		// 			if (key == "dest_ISO"){
-		// 				out.push("Destination: " + f.properties[key]);
-		// 			}
-		// 			if (key == "route_type"){
-		// 				out.push("Route Type: " + f.properties[key]);
-		// 			}
-		// 			if (key == "max_good"){
-		// 				out.push("Highest Spend Commodity ID: " + f.properties[key]["HS"])
-		// 			}
-		// 			if (key == "qty"){
-		// 				out.push("Commodity Spend: " + f.properties[key]["qty"])
-		// 			}
-		// 			l.bindPopup(out.join("<br />"));
-		// 		}
-        //     }
-        // }
-
-        // add layer to map and layer control
-        // function add_layer(layr, layr_name) {
-        //     map.addLayer(layr);
-        //     layerControl.addOverlay(layr, layr_name);
-        // }
-
-        // fire ajax request
-        // var points = new L.GeoJSON.AJAX("events.geojson", { onEachFeature: popUp });
-
-		routesGeoJSON = false
+		
 		eventsGeoJSON = false
+
         // create empty marker cluster group
-        var markers = L.markerClusterGroup()
+		var markers = L.markerClusterGroup()
 
 		fetch('/events.geojson', {
 			method: 'GET'
 		})
 		.then(response => response.json())
 		.then(json => {
-			console.log(json)
-			eventsGeoJSON = L.geoJSON(json)
+			// var eventScaleMin = 0
+			// var eventScaleMax = 0
+			eventsGeoJSON = L.geoJSON(json, {
+				pointToLayer: function(geoJsonPoint, latlng){
+					// Get min/max
+					// if(geoJsonPoint.properties['scale']<eventScaleMin || eventScaleMin === 0){
+					// 	eventScaleMin = geoJsonPoint.properties['scale']
+					// 	console.log(eventScaleMin)
+					// }
+					// if(geoJsonPoint.properties['scale']>eventScaleMax){
+					// 	eventScaleMax = geoJsonPoint.properties['scale']
+					// }
+					var html='';
+					var arrayOfProps=['dyad_name','Total_deaths','date_start','date_end','scale'];
+					arrayOfProps.forEach(function(prop){
+						if (prop == "dyad_name"){
+							html += '<strong>Event Name</strong>: ' +geoJsonPoint.properties[prop]+'<br />';							
+						}
+						if (prop == "Total_deaths"){
+							html += '<strong>Total Deaths</strong>: ' +geoJsonPoint.properties[prop]+'<br />';							
+						}
+						if (prop == "date_start"){
+							html += '<strong>Start Date</strong>: ' +geoJsonPoint.properties[prop]+'<br />';							
+						}
+						if (prop == "date_end"){
+							html += '<strong>End Date</strong>: ' +geoJsonPoint.properties[prop]+'<br />';							
+						}
+						if (prop == "scale"){
+							html += '<strong>Event Scale</strong>: ' +geoJsonPoint.properties[prop]+'<br />';							
+						}
+					})
+					return L.marker(latlng).bindPopup(html)
+				}
+			})
 			markers.addLayer(eventsGeoJSON);
-		})
+			})
 		.catch(error => console.log(error.message))
-
 		markers.addTo(map)
-        // when geojson is loaded, add points to marker cluster group and add to map & layer control
-        // points.on('data:loaded', function () {
-        //     markers.addLayer(points);
-        //     add_layer(markers, "Point Markers")
-        // });
-
+        
+		routesGeoJSON = false
 		// Create layer group for routes
 		var allRoutes = L.layerGroup()
 
@@ -180,6 +141,37 @@
 							color: "grey"
 						}
 					}
+				},
+				onEachFeature: function(feature, layer) {
+					html = ''
+					var arrayOfProps=['route_ID','orig_ISO','dest_ISO','weight','route_type', 'period', 'max_good.commodity','total_value'];
+					arrayOfProps.forEach(function(prop){
+						if (prop == "route_ID"){
+							html += '<strong>Route ID</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+						if (prop == "orig_ISO"){
+							html += '<strong>Route Origin</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+						if (prop == "dest_ISO"){
+							html += '<strong>Route Destination</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+						if (prop == "weight"){
+							html += '<strong>Route Weight</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+						if (prop == "route_type"){
+							html += '<strong>Route Type</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+						if (prop == "period"){
+							html += '<strong>Route Year</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+						if (prop == "max_good.commodity"){
+							html += '<strong>Highest Spend Good</strong>: ' +feature.properties["max_good"]["commodity"]+'<br />';							
+						}
+						if (prop == "total_value"){
+							html += '<strong>Route Spend (USD)</strong>: ' +feature.properties[prop]+'<br />';							
+						}
+					})
+					return layer.bindPopup(html)
 				}
 			})
 			allRoutes.addLayer(routesGeoJSON);
@@ -191,7 +183,7 @@
 		$(document).on('keyup', '#event-search', function(e) {
 			var userInput = e.target.value;
 			eventsGeoJSON.eachLayer(function(layer){
-				if(layer.feature.properties.dyad_name.indexOf(userInput)>-1){
+				if(layer.feature.properties.dyad_name.toLowerCase().indexOf(userInput.toLowerCase())>-1){
 					markers.addLayer(layer);
 				} else {
 					markers.removeLayer(layer);
@@ -203,44 +195,38 @@
 		$(document).on('keyup', '#commodity-search', function(e) {
 			var userInput = e.target.value;
 			routesGeoJSON.eachLayer(function(layer){
-				if(layer.feature.properties.route_type.indexOf(userInput)>-1){
+				if(layer.feature.properties.route_type.toLowerCase().indexOf(userInput.toLowerCase())>-1){
 					allRoutes.addLayer(layer);
 				} else {
 					allRoutes.removeLayer(layer);
 				}
-				// console.log(layer)
 			})
 		})
 
-		// when geojson is loaded, add paths to group and add to map & layer control
-		var min = 0;
-		var max = 0;
-		// var paths = new L.GeoJSON.AJAX("sc_routes.geojson", {style: function(feature) {
-		// 	if (feature.properties["route_type"] == "sea") {
-		// 		return {
-		// 			color: 'blue'
-		// 		}
-		// 	}
-		// 	if (feature.properties["route_type"] == "Road") {
-		// 		return {
-		// 			color: 'green'
-		// 		}
-		// 	}
-		// 	if (feature.properties["route_type"] == "Air") {
-		// 		return {
-		// 			color: 'grey'
-		// 		}
-		// 	}
-		// }, onEachFeature: popUp});
-        // paths.on('data:loaded', function () {
-		// 	allRoutes.addLayer(paths);
-		// 	add_layer(allRoutes, "Routes")
-        // });
-
+		// console.log(eventScaleMin, eventScaleMax)
 		var eventSlider = document.getElementById('event-slider');
 		noUiSlider.create(eventSlider, {
 			tooltips: true,
 			start: [20],
+			connect: true,
+			range: {
+				'min': 0,
+				'max': 12000000
+			}
+		}).on('slide', function(e) {
+			eventsGeoJSON.eachLayer(function(layer) {
+				if(layer.feature.properties.scale>=parseFloat(e[0])){
+					markers.addLayer(layer);
+				} else {
+					markers.removeLayer(layer);
+				}
+			}
+		)});
+
+		var commoditySlider = document.getElementById('commodity-slider');
+		noUiSlider.create(commoditySlider, {
+			tooltips: true,
+			start: [20, 20000000],
 			connect: true,
 			range: {
 				'min': 0,
@@ -250,20 +236,18 @@
 
 		});
 
-		var commoditySlider = document.getElementById('commodity-slider');
-		noUiSlider.create(commoditySlider, {
+		var yearSlider = document.getElementById('year-slider');
+		noUiSlider.create(yearSlider, {
 			tooltips: true,
-			start: [2000000000, 8000000000],
+			start: [20, 20000000],
 			connect: true,
 			range: {
 				'min': 0,
-				'max': 15662880479.3973
+				'max': 100
 			}
 		}).on('slide', function(e) {
 
 		});
-
-
     </script>
 </body>
 </html>
