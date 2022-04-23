@@ -21,8 +21,8 @@
         var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'}).addTo(map);
         map.options.minZoom = 3;
-        var southWest = L.latLng(-89.98155760646617, -400),
-        northEast = L.latLng(89.99346179538875, 400);
+        var southWest = L.latLng(-89.98155760646617, -540),
+        northEast = L.latLng(89.99346179538875, 540);
         var bounds = L.latLngBounds(southWest, northEast);
         map.setMaxBounds(bounds);
         
