@@ -27,12 +27,11 @@
         map.setMaxBounds(bounds);
         
 		function antPath(f, l){
-			console.log("hi")
 			if (f.geometry){
 				for (key in f.geometry) {
-					console.log(key)
+					console.log("hi")
 					latlngs = f.geometry[coordinates]
-					antPaths.addLayer(L.polyline.antPath(latlngs))
+					L.polyline.antPath(latlngs).addTo(map)
 				}
 			}
 		}
@@ -79,13 +78,13 @@
         });
 
 		// Create layer group for ant paths
-		var antPaths = L.layerGroup()
+		// var antPaths = L.layerGroup()
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
         paths.on('data:loaded', function () {
 
         });
-		antPaths.addTo(map)
+		// antPaths.addTo(map)
 		// layerControl.addTo(map);
     </script>
 </body>
