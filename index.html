@@ -46,7 +46,7 @@
 							out.push("Route Type: " + f.properties[key]);
 						}
 						latlngs = f.geometry["coordinates"]
-						l.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
+						L.polyline(latlngs).bindPopup(out.join("<br />")).addTo(map);
 						// l.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
 					}				
 				}
