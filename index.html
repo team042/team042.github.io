@@ -18,7 +18,7 @@
 		#overlay{
 			position: absolute;
 			z-index: 999;
-			background: rgba(255, 255, 255, 0.7);
+			background: rgba(255, 255, 255, 0.9);
 			padding: 10px;
 			right: 0;
 			margin: 10px;
@@ -58,13 +58,28 @@
 		<div id="event-slider" class="slider"></div>
 		<!-- <p><u>Earliest Event Date</u></p>
 		<div id="event-date-slider" class="slider"></div> -->
+		<div class='my-legend'>
+			<div class='legend-title'>Route Types</div>
+			<div class='legend-scale'>
+			  <ul class='legend-labels'>
+				<li><span style='background:rgba(200,200,200,1)'></span>Air</li>
+				<li><span style='background:rgba(0,90,171,1);'></span>Sea</li>
+				<li><span style='background:rgba(42,166,115,1);'></span>Road</li>
+			  </ul>
+			</div>
+		</div>
 	</div>
     <div id="map" style="width:100%;"></div>
 
     <script>
+
 		$('#map').height(window.innerHeight);
-        var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'}).addTo(map);
+        var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+			maxZoom: 20,
+			attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+		});
+		var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
+        L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'}).addTo(map);
         map.options.minZoom = 3;
         var southWest = L.latLng(-89.98155760646617, -300),
         northEast = L.latLng(89.99346179538875, 350);
@@ -132,19 +147,19 @@
 			console.log(json)
 			routesGeoJSON = L.geoJSON(json, {
 				style: function (feature) {
-					if (feature.properties["route_type"] == "sea"){
+					if (feature.properties["route_type"] == "Sea"){
 						return {
-							color: "blue"
+							color: "rgba(0,90,171,0.3)"
 						}
 					}
 					if (feature.properties["route_type"] == "Road"){
 						return {
-							color: "green"
+							color: "rgba(42,166,115,0.3)"
 						}
 					}
 					if (feature.properties["route_type"] == "Air"){
 						return {
-							color: "grey"
+							color: "rgba(200,200,200,0.3)"
 						}
 					}
 				},
