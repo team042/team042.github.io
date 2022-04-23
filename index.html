@@ -38,10 +38,8 @@
 							f.geometry["coordinates"][f.geometry["coordinates"].length-1][1]+=440
 						}
 						latlngs = f.geometry["coordinates"]
-						L.polyline(latlngs).addTo(map)
-					}
-					// console.log(latlngs)
-					
+						L.polyline(latlngs).bindPopup(f.properties["route_ID"]).addTo(map)
+					}				
 				}
 			}
 		}
