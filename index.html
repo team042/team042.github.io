@@ -77,7 +77,7 @@
 						out.push("Route Type: " + f.properties[key]);
 					}
 					if (key == "max_good"){
-						out.push("Highest Spend Commodity: " + f.properties[key]["HS"])
+						out.push("Highest Spend Commodity ID: " + f.properties[key]["HS"])
 					}
 					if (key == "qty"){
 						out.push("Commodity Spend: " + f.properties[key]["qty"])
@@ -91,7 +91,6 @@
         function add_layer(layr, layr_name) {
             map.addLayer(layr);
             layerControl.addOverlay(layr, layr_name);
-			layerControl.addTo(map)
         }
 
         // fire ajax request
