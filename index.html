@@ -12,12 +12,33 @@
     <script src="leaflet-ant-path.js"></script>
     <script src="leaflet.ajax.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    
+    <style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+		#overlay{
+			position: absolute;
+			z-index: 999;
+			background: rgba(255, 255, 255, 0.7);
+			padding: 10px;
+			right: 0;
+			margin: 10px;
+			border-radius: 10px;
+			box-shadow: 1px 1px 1px grey;
+			min-height: 200px;
+		}
+	</style>
 </head>
 <body>
-    <div id="map"></div>
+
+	<div id="overlay">
+		<h2>Map Options</h2>
+	</div>
+    <div id="map" style="width:100%;"></div>
 
     <script>
+		$('#map').height(window.innerHeight);
         var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'}).addTo(map);
         map.options.minZoom = 3;
@@ -106,12 +127,12 @@
         });
 
 		// Create layer group for ant paths
-		var antPaths = L.layerGroup()
+		var allRoutes = L.layerGroup()
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: popUp});
         paths.on('data:loaded', function () {
-			antPaths.addLayer(paths);
-			add_layer(antPaths, "Routes")
+			allRoutes.addLayer(paths);
+			add_layer(allRoutes, "Routes")
         });
 		// antPaths.addTo(map)
 		// layerControl.addTo(map);
