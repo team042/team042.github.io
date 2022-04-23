@@ -4,12 +4,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <!-- sourcing add-ons for jquery-->
-    <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
-    <script src="leaflet.ajax.js"></script>
 	<script src="nouislider.min.js"></script>
     <link rel="stylesheet" href="nouislider.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -36,7 +33,6 @@
 		.slider {
 			width: 200px;
 			margin-top: 50px;
-			background: #c0392b;
 		}
 	</style>
 </head>
@@ -83,89 +79,117 @@
 		// }
 
 		// pop-up function
-        function popUp(f, l) {
-            var out = [];
-            if (f.properties) {
-                for (key in f.properties) {
-					if (key == "dyad_name"){
-						out.push("Event Name: " + f.properties[key]);
-					}
-					if (key == "scale"){
-						out.push("Scale: "+f.properties[key])
-					}
-					if (key == "date_start"){
-						out.push("Event Start Date: "+f.properties[key])
-					}
-					if (key == "date_end"){
-						out.push("Event End Date: "+f.properties[key])
-					}
-					if (key == "route_ID"){
-						out.push("Route ID: " + f.properties[key]);
-					}
-					if (key == "orig_ISO"){
-						out.push("Origin: " + f.properties[key]);
-					}
-					if (key == "dest_ISO"){
-						out.push("Destination: " + f.properties[key]);
-					}
-					if (key == "route_type"){
-						out.push("Route Type: " + f.properties[key]);
-					}
-					if (key == "max_good"){
-						out.push("Highest Spend Commodity ID: " + f.properties[key]["HS"])
-					}
-					if (key == "qty"){
-						out.push("Commodity Spend: " + f.properties[key]["qty"])
-					}
-					l.bindPopup(out.join("<br />"));
-				}
-            }
-        }
+        // function popUp(f, l) {
+        //     var out = [];
+        //     if (f.properties) {
+        //         for (key in f.properties) {
+		// 			if (key == "dyad_name"){
+		// 				out.push("Event Name: " + f.properties[key]);
+		// 			}
+		// 			if (key == "scale"){
+		// 				out.push("Scale: "+f.properties[key])
+		// 			}
+		// 			if (key == "date_start"){
+		// 				out.push("Event Start Date: "+f.properties[key])
+		// 			}
+		// 			if (key == "date_end"){
+		// 				out.push("Event End Date: "+f.properties[key])
+		// 			}
+		// 			if (key == "route_ID"){
+		// 				out.push("Route ID: " + f.properties[key]);
+		// 			}
+		// 			if (key == "orig_ISO"){
+		// 				out.push("Origin: " + f.properties[key]);
+		// 			}
+		// 			if (key == "dest_ISO"){
+		// 				out.push("Destination: " + f.properties[key]);
+		// 			}
+		// 			if (key == "route_type"){
+		// 				out.push("Route Type: " + f.properties[key]);
+		// 			}
+		// 			if (key == "max_good"){
+		// 				out.push("Highest Spend Commodity ID: " + f.properties[key]["HS"])
+		// 			}
+		// 			if (key == "qty"){
+		// 				out.push("Commodity Spend: " + f.properties[key]["qty"])
+		// 			}
+		// 			l.bindPopup(out.join("<br />"));
+		// 		}
+        //     }
+        // }
 
         // add layer to map and layer control
-        function add_layer(layr, layr_name) {
-            map.addLayer(layr);
-            layerControl.addOverlay(layr, layr_name);
-        }
+        // function add_layer(layr, layr_name) {
+        //     map.addLayer(layr);
+        //     layerControl.addOverlay(layr, layr_name);
+        // }
 
         // fire ajax request
-        var points = new L.GeoJSON.AJAX("events.geojson", { onEachFeature: popUp });
+        // var points = new L.GeoJSON.AJAX("events.geojson", { onEachFeature: popUp });
 
         // create empty marker cluster group
         var markers = L.markerClusterGroup()
+		
+		var eventsGeoJSON = false;
+		fetch('/events.geojson', {
+			method: 'GET'
+		})
+		.then(response => response.json())
+		.then(json => {
+			console.log(json)
+			markers.addLayer(L.geoJSON(json));
+		})
+		.catch(error => console.log(error.message))
 
+		markers.addTo(map)
         // when geojson is loaded, add points to marker cluster group and add to map & layer control
-        points.on('data:loaded', function () {
-            markers.addLayer(points);
-            add_layer(markers, "Point Markers")
-        });
+        // points.on('data:loaded', function () {
+        //     markers.addLayer(points);
+        //     add_layer(markers, "Point Markers")
+        // });
 
-		// Create layer group for ant paths
+		// Create layer group for routes
 		var allRoutes = L.layerGroup()
+
+		var eventsGeoJSON = false;
+		fetch('/sc_routes.geojson', {
+			method: 'GET'
+		})
+		.then(response => response.json())
+		.then(json => {
+			console.log(json)
+			allRoutes.addLayer(L.geoJSON(json));
+		})
+		.catch(error => console.log(error.message))
+
+		allRoutes.addTo(map)
+
+
+
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var min = 0;
 		var max = 0;
-		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", {style: function(feature) {
-			if (feature.properties["route_type"] == "sea") {
-				return {
-					color: 'blue'
-				}
-			}
-			if (feature.properties["route_type"] == "Road") {
-				return {
-					color: 'green'
-				}
-			}
-			if (feature.properties["route_type"] == "Air") {
-				return {
-					color: 'grey'
-				}
-			}
-		}, onEachFeature: popUp});
-        paths.on('data:loaded', function () {
-			allRoutes.addLayer(paths);
-			add_layer(allRoutes, "Routes")
-        });
+		// var paths = new L.GeoJSON.AJAX("sc_routes.geojson", {style: function(feature) {
+		// 	if (feature.properties["route_type"] == "sea") {
+		// 		return {
+		// 			color: 'blue'
+		// 		}
+		// 	}
+		// 	if (feature.properties["route_type"] == "Road") {
+		// 		return {
+		// 			color: 'green'
+		// 		}
+		// 	}
+		// 	if (feature.properties["route_type"] == "Air") {
+		// 		return {
+		// 			color: 'grey'
+		// 		}
+		// 	}
+		// }, onEachFeature: popUp});
+        // paths.on('data:loaded', function () {
+		// 	allRoutes.addLayer(paths);
+		// 	add_layer(allRoutes, "Routes")
+        // });
 
 		var commoditySlider = document.getElementById('commodity-slider');
 		noUiSlider.create(commoditySlider, {
@@ -174,7 +198,7 @@
 			connect: true,
 			range: {
 				'min': 0,
-				'max': 100
+				'max': 15662880479.3973
 			}
 		}).on('slide', function(e) {
 
@@ -191,8 +215,7 @@
 		}).on('slide', function(e) {
 
 		});
-		// antPaths.addTo(map)
-		// layerControl.addTo(map);
+
     </script>
 </body>
 </html>
