@@ -32,16 +32,8 @@
 				for (key in f.properties) {
 					console.log("hi")
 					if (f.properties["weight"]>=0.25) {
-						var start = f.geometry["coordinates"][0][1] 
-						var end = f.geometry["coordinates"][f.geometry["coordinates"].length-1][1]
-						if (start > 0 && end < 0){
-							f.geometry["coordinates"][f.geometry["coordinates"].length-1][1]+=440
-						}
-						if (end > 0 && start < 0){
-							f.geometry["coordinates"][0][1] +=440
-						}
 						latlngs = f.geometry["coordinates"]
-						L.polyline(latlngs).bindPopup(f.properties["route_ID"]).addTo(map)
+						L.polyline(latlngs).bindPopup(f.properties["route_ID"])// .addTo(map)
 					}				
 				}
 			}
@@ -89,11 +81,12 @@
         });
 
 		// Create layer group for ant paths
-		// var antPaths = L.layerGroup()
+		var antPaths = L.layerGroup()
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
         paths.on('data:loaded', function () {
-
+			antPaths.addLayer(paths);
+			add_layer(antPaths, "Routes")
         });
 		// antPaths.addTo(map)
 		// layerControl.addTo(map);
