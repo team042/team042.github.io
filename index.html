@@ -26,28 +26,26 @@
         var bounds = L.latLngBounds(southWest, northEast);
         map.setMaxBounds(bounds);
         
-		function antPath(f, l){
-			out = []
-			if (f.geometry){
-				for (key in f.properties) {
-					if (f.properties["weight"]>=0.25) {
-						if (key == "route_ID"){
-							out.push("Route ID: " + f.properties[key]);
-						}
-						if (key == "orig_ISO"){
-							out.push("Origin: " + f.properties[key]);
-						}
-						if (key == "dest_ISO"){
-							out.push("Destination: " + f.properties[key]);
-						}
-						if (key == "route_type"){
-							out.push("Route Type: " + f.properties[key]);
-						}
-						l.bindPopup(out.join("<br />"));
-					}				
-				}
-			}
-		}
+		// function antPath(f, l){
+		// 	out = []
+		// 	if (f.geometry){
+		// 		for (key in f.properties) {
+		// 			if (key == "route_ID"){
+		// 				out.push("Route ID: " + f.properties[key]);
+		// 			}
+		// 			if (key == "orig_ISO"){
+		// 				out.push("Origin: " + f.properties[key]);
+		// 			}
+		// 			if (key == "dest_ISO"){
+		// 				out.push("Destination: " + f.properties[key]);
+		// 			}
+		// 			if (key == "route_type"){
+		// 				out.push("Route Type: " + f.properties[key]);
+		// 			}
+		// 			l.bindPopup(out.join("<br />"));
+		// 		}
+		// 	}
+		// }
 
 		// pop-up function
         function popUp(f, l) {
@@ -65,6 +63,18 @@
 					}
 					if (key == "date_end"){
 						out.push("Event End Date: "+f.properties[key])
+					}
+					if (key == "route_ID"){
+						out.push("Route ID: " + f.properties[key]);
+					}
+					if (key == "orig_ISO"){
+						out.push("Origin: " + f.properties[key]);
+					}
+					if (key == "dest_ISO"){
+						out.push("Destination: " + f.properties[key]);
+					}
+					if (key == "route_type"){
+						out.push("Route Type: " + f.properties[key]);
 					}
 					l.bindPopup(out.join("<br />"));
 				}
@@ -93,7 +103,7 @@
 		// Create layer group for ant paths
 		var antPaths = L.layerGroup()
 		// when geojson is loaded, add paths to group and add to map & layer control
-		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
+		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: popUp});
         paths.on('data:loaded', function () {
 			antPaths.addLayer(paths);
 			add_layer(antPaths, "Routes")
