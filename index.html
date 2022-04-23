@@ -40,9 +40,13 @@
 
 	<div id="overlay">
 		<h2>Map Options</h2>
+		<p><u>Event Search</u></p>
+		<input id="event-search" type="text" />
+		<p><u>Commodity Search</u></p>
+		<input id="commodity-search" type="text" />
 		<p><u>Commodity Value</u></p>
 		<div id="commodity-slider" class="slider"></div>
-		<p><u>Event Scale</u></p>
+		<p><u>Minimum Event Scale</u></p>
 		<div id="event-slider" class="slider"></div>
 	</div>
     <div id="map" style="width:100%;"></div>
@@ -127,17 +131,19 @@
         // fire ajax request
         // var points = new L.GeoJSON.AJAX("events.geojson", { onEachFeature: popUp });
 
+		routesGeoJSON = false
+		eventsGeoJSON = false
         // create empty marker cluster group
         var markers = L.markerClusterGroup()
-		
-		var eventsGeoJSON = false;
+
 		fetch('/events.geojson', {
 			method: 'GET'
 		})
 		.then(response => response.json())
 		.then(json => {
 			console.log(json)
-			markers.addLayer(L.geoJSON(json));
+			eventsGeoJSON = L.geoJSON(json)
+			markers.addLayer(eventsGeoJSON);
 		})
 		.catch(error => console.log(error.message))
 
@@ -151,20 +157,60 @@
 		// Create layer group for routes
 		var allRoutes = L.layerGroup()
 
-		var eventsGeoJSON = false;
 		fetch('/sc_routes.geojson', {
 			method: 'GET'
 		})
 		.then(response => response.json())
 		.then(json => {
 			console.log(json)
-			allRoutes.addLayer(L.geoJSON(json));
+			routesGeoJSON = L.geoJSON(json, {
+				style: function (feature) {
+					if (feature.properties["route_type"] == "sea"){
+						return {
+							color: "blue"
+						}
+					}
+					if (feature.properties["route_type"] == "Road"){
+						return {
+							color: "green"
+						}
+					}
+					if (feature.properties["route_type"] == "Air"){
+						return {
+							color: "grey"
+						}
+					}
+				}
+			})
+			allRoutes.addLayer(routesGeoJSON);
 		})
 		.catch(error => console.log(error.message))
 
 		allRoutes.addTo(map)
 
+		$(document).on('keyup', '#event-search', function(e) {
+			var userInput = e.target.value;
+			eventsGeoJSON.eachLayer(function(layer){
+				if(layer.feature.properties.dyad_name.indexOf(userInput)>-1){
+					markers.addLayer(layer);
+				} else {
+					markers.removeLayer(layer);
+				}
+				// console.log(layer)
+			})
+		})
 
+		$(document).on('keyup', '#commodity-search', function(e) {
+			var userInput = e.target.value;
+			routesGeoJSON.eachLayer(function(layer){
+				if(layer.feature.properties.route_type.indexOf(userInput)>-1){
+					allRoutes.addLayer(layer);
+				} else {
+					allRoutes.removeLayer(layer);
+				}
+				// console.log(layer)
+			})
+		})
 
 		// when geojson is loaded, add paths to group and add to map & layer control
 		var min = 0;
@@ -191,22 +237,10 @@
 		// 	add_layer(allRoutes, "Routes")
         // });
 
-		var commoditySlider = document.getElementById('commodity-slider');
-		noUiSlider.create(commoditySlider, {
-			tooltips: true,
-			start: [20, 80],
-			connect: true,
-			range: {
-				'min': 0,
-				'max': 15662880479.3973
-			}
-		}).on('slide', function(e) {
-
-		});
 		var eventSlider = document.getElementById('event-slider');
 		noUiSlider.create(eventSlider, {
 			tooltips: true,
-			start: [20, 80],
+			start: [20],
 			connect: true,
 			range: {
 				'min': 0,
@@ -215,6 +249,20 @@
 		}).on('slide', function(e) {
 
 		});
+
+		var commoditySlider = document.getElementById('commodity-slider');
+		noUiSlider.create(commoditySlider, {
+			tooltips: true,
+			start: [2000000000, 8000000000],
+			connect: true,
+			range: {
+				'min': 0,
+				'max': 15662880479.3973
+			}
+		}).on('slide', function(e) {
+
+		});
+
 
     </script>
 </body>
