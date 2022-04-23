@@ -78,10 +78,12 @@
             add_layer(markers, "Point Markers")
         });
 
+		// when geojson is loaded, add paths to group and add to map & layer control
 		var paths = new L.GeoJSON.AJAX("sc_routes.geojson", { onEachFeature: antPath});
         paths.on('data:loaded', function () {
 			
         });
+
 		L.control.layers(overlays).addTo(map);
     </script>
 </body>
