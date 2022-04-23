@@ -30,8 +30,9 @@
 			// console.log("hi")
 			if (f.geometry){
 				for (key in f.properties) {
-					// console.log(key)
+					console.log("hi")
 					if (f.properties["weight"]>=0.25) {
+						console.log(f.geometry["coordinates"][0])
 						latlngs = f.geometry["coordinates"]
 						L.polyline(latlngs).addTo(map)
 					}
