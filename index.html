@@ -58,6 +58,7 @@
 		<div id="event-slider" class="slider"></div>
 		<!-- <p><u>Earliest Event Date</u></p>
 		<div id="event-date-slider" class="slider"></div> -->
+		<button onclick="showAllRoutes()">Show All Routes</button>
 		<div class='my-legend'>
 			<div class='legend-title'>Route Types</div>
 			<div class='legend-scale'>
@@ -72,7 +73,6 @@
     <div id="map" style="width:100%;"></div>
 
     <script>
-
 		$('#map').height(window.innerHeight);
 		var map = L.map('map').setView([17.410199787878017, 26.73338651585506], 4);
 		var Jawg_Dark = L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token={accessToken}', {
@@ -91,16 +91,26 @@
 		
 		var eventsGeoJSON = false
 		var routesGeoJSON = false
-		var eventFilters ={
-			text: '',
-			range: []
+
+		var routeByEvent = {
+			event: [],
+			routePoints: []
 		}
-		var routeFilters = {
-			text: '',
-			range: []
-		}
+
+		fetch('/model.json', {
+			method: 'GET'
+		})
+		.then(response => response.json())
+		.then(json => {
+			for (var i =0;i<json.length; i++){
+				routeByEvent.event.push(json[i]["Event"])
+				routeByEvent.routePoints.push(json[i]["route_points"])
+			}
+		})
+		.catch(error => console.log(error.message))
         // create empty marker cluster group
 		var markers = L.markerClusterGroup()
+		var impactedRoutes = L.layerGroup()
 
 		fetch('/events.geojson', {
 			method: 'GET'
@@ -134,7 +144,16 @@
 			markers.addLayer(eventsGeoJSON);
 			})
 		.catch(error => console.log(error.message))
-		markers.addTo(map)
+		markers.addTo(map).on('click', function(e) {
+			impactedRoutes.clearLayers();
+			map.removeLayer(allRoutes);
+			for (index in routeByEvent.event){				
+				if (routeByEvent.event[index] == e.sourceTarget.feature.properties["dyad_name"]){
+					impactedRoutes.addLayer(L.polyline(routeByEvent.routePoints[index]))
+				}
+			}
+			impactedRoutes.addTo(map);
+		})
         
 		
 		// Create layer group for routes
@@ -236,7 +255,7 @@
 			connect: true,
 			range: {
 				'min': 0,
-				'50%': 0.5,
+				'50%': 0.03,
 				'90%' :10,
 				'max': 100
 			}
@@ -250,44 +269,50 @@
 			}
 		)});
 
-		var commoditySlider = document.getElementById('commodity-slider');
-		noUiSlider.create(commoditySlider, {
-			tooltips: true,
-			start: [20, 20000000],
-			connect: true,
-			range: {
-				'min': 0,
-				'max': 100
-			}
-		}).on('slide', function(e) {
+		function showAllRoutes() {
+			map.removeLayer(impactedRoutes);
+			allRoutes.addTo(map)
+		}
 
-		});
+		const showRoutes = document.querySelector(".name");
+		// var commoditySlider = document.getElementById('commodity-slider');
+		// noUiSlider.create(commoditySlider, {
+		// 	tooltips: true,
+		// 	start: [20, 20000000],
+		// 	connect: true,
+		// 	range: {
+		// 		'min': 0,
+		// 		'max': 100
+		// 	}
+		// }).on('slide', function(e) {
 
-		var yearSlider = document.getElementById('route-year-slider');
-		noUiSlider.create(yearSlider, {
-			tooltips: true,
-			start: [20, 20000000],
-			connect: true,
-			range: {
-				'min': 0,
-				'max': 100
-			}
-		}).on('slide', function(e) {
+		// });
 
-		});
+		// var yearSlider = document.getElementById('route-year-slider');
+		// noUiSlider.create(yearSlider, {
+		// 	tooltips: true,
+		// 	start: [20, 20000000],
+		// 	connect: true,
+		// 	range: {
+		// 		'min': 0,
+		// 		'max': 100
+		// 	}
+		// }).on('slide', function(e) {
 
-		var dateSlider = document.getElementById('event-date-slider');
-		noUiSlider.create(dateSlider, {
-			tooltips: true,
-			start: [20],
-			connect: true,
-			range: {
-				'min': 0,
-				'max': 100
-			}
-		}).on('slide', function(e) {
+		// });
 
-		});
+		// var dateSlider = document.getElementById('event-date-slider');
+		// noUiSlider.create(dateSlider, {
+		// 	tooltips: true,
+		// 	start: [20],
+		// 	connect: true,
+		// 	range: {
+		// 		'min': 0,
+		// 		'max': 100
+		// 	}
+		// }).on('slide', function(e) {
+
+		// });
     </script>
 </body>
 </html>
