@@ -3,7 +3,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <!-- sourcing add-ons for jquery-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster-src.js"></script>
@@ -11,10 +10,6 @@
     <link rel="stylesheet" href="nouislider.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
-		/* body {
-			margin: 0;
-			padding: 0;
-		} */
 		#overlay{
 			position: absolute;
 			z-index: 999;
@@ -36,9 +31,9 @@
 			margin-bottom: 50px;
 		}
 	</style>
+	<title>Deep Belief Supply Chain Map</title>
 </head>
 <body>
-
 	<div id="overlay">
 		<h2>Map Options</h2>
 		<p><u>Event Search</u></p>
@@ -66,9 +61,13 @@
 				<li><span style='background:rgba(200,200,200,1)'></span>Air</li>
 				<li><span style='background:rgba(42,166,115,1);'></span>Road</li>
 				<li><span style='background:rgba(0,90,171,1);'></span>Sea</li>
+				<li><span style='background:rgba(245,51,63,1);'></span>Impacted</li>
 			  </ul>
 			</div>
 		</div>
+		<form action="about.html">
+			<input type="submit" value="About" />
+		</form>
 	</div>
     <div id="map" style="width:100%;"></div>
 
@@ -94,7 +93,8 @@
 
 		var routeByEvent = {
 			event: [],
-			routePoints: []
+			routePoints: [],
+			products: []
 		}
 
 		fetch('/model.json', {
@@ -105,6 +105,7 @@
 			for (var i =0;i<json.length; i++){
 				routeByEvent.event.push(json[i]["Event"])
 				routeByEvent.routePoints.push(json[i]["route_points"])
+				routeByEvent.products.push(json[i]["product_name"])
 			}
 		})
 		.catch(error => console.log(error.message))
@@ -149,7 +150,12 @@
 			map.removeLayer(allRoutes);
 			for (index in routeByEvent.event){				
 				if (routeByEvent.event[index] == e.sourceTarget.feature.properties["dyad_name"]){
-					impactedRoutes.addLayer(L.polyline(routeByEvent.routePoints[index]))
+					line = L.polyline(routeByEvent.routePoints[index])
+					impactedRoutes.addLayer(L.polyline(routeByEvent.routePoints[index]).setStyle({
+						color: "rgba(245,51,63,0.3)"
+						// "Impacting Event: " + routeByEvent.event[index])+"<br />
+					}).bindPopup("Impacting Event: " + routeByEvent.event[index]+"<br />Product Name: "+ routeByEvent.products[index])
+					)
 				}
 			}
 			impactedRoutes.addTo(map);
